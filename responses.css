@@ -1,0 +1,83 @@
+#formsList .list-group-item {
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+#formsList .list-group-item:hover {
+    background-color: #f8f9fa;
+}
+
+#formsList .list-group-item.active {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+}
+
+.response-item {
+    padding: 1rem;
+    border-bottom: 1px solid #eee;
+}
+
+.response-item:last-child {
+    border-bottom: none;
+}
+
+.response-meta {
+    font-size: 0.8rem;
+    color: #6c757d;
+}
+
+.chart-container {
+    margin-bottom: 2rem;
+}
+
+.chart-container canvas {
+    max-height: 300px;
+}
+
+        /* Additional styles for enhanced response tracking */
+        .response-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        .response-filter {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        .export-buttons {
+            margin-bottom: 20px;
+        }
+        .response-item {
+            position: relative;
+        }
+        .response-tags {
+            display: flex;
+            gap: 5px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+        .response-tag {
+            font-size: 0.75rem;
+            padding: 2px 8px;
+            border-radius: 10px;
+            background: #e9ecef;
+        }
+        .chart-container {
+            margin-bottom: 2rem;
+            border: 1px solid #eee;
+            padding: 15px;
+            border-radius: 8px;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #6c757d;
+        }
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            color: #dee2e6;
+        }
+    

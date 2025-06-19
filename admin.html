@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FeedbackHub - Admin Panel</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="main.css">
+    <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+    <div id="navbar-container"></div>
+    <div class="container my-5">
+        <h2 class="mb-4">Admin Panel</h2>
+        <div class="row">
+            <!-- Forms Management -->
+            <div class="col-md-6 mb-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>All Forms</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="formsList" class="list-group"></div>
+                    </div>
+                </div>
+            </div>
+            <!-- Users Management -->
+            <div class="col-md-6 mb-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>All Users</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="usersList" class="list-group"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Responses Management -->
+        <div class="card">
+            <div class="card-header">
+                <h5>All Responses</h5>
+            </div>
+            <div class="card-body">
+                <div id="responsesContainer"></div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="auth.js"></script>
+    <script src="utils.js"></script>
+    <script src="analytics.js"></script>
+    <script src="responses.js"></script>
+    <script>
+        // Initialize admin panel
+        authSystem.initAdminPanel();
+        // Load navbar
+        fetch('navbar.html')
+            .then(response => response.text())
+            .then(html => {
+                document.getElementById('navbar-container').innerHTML = html;
+                document.getElementById('userGreeting').textContent = `Welcome, ${authSystem.getCurrentUser().name} (Admin)`;
+                document.getElementById('logoutBtn').addEventListener('click', () => authSystem.logout());
+                updateResponseCountBadge();
+            });
+    </script>
+</body>
+</html>

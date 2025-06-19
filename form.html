@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FeedbackHub - Public Form</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="main.css">
+    <link rel="icon" type="image/png" href="/favicon.png">
+</head>
+<body>
+    <div class="container my-5">
+        <div id="formContainer" class="card">
+            <div class="card-body">
+                <h2 id="formTitle" class="card-title"></h2>
+                <p id="formDescription" class="card-text text-muted"></p>
+                <form id="publicForm">
+                    <div id="questionsContainer"></div>
+                    <button type="submit" class="btn btn-primary mt-3">Submit</button>
+                </form>
+                <div id="responseOutput" class="mt-3 d-none">
+                    <h5>Response Submitted</h5>
+                    <p>Please copy the following JSON and send it to the form creator:</p>
+                    <pre id="responseJson" class="p-3 bg-light border"></pre>
+                    <button class="btn btn-secondary" onclick="copyResponse()">Copy to Clipboard</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="auth.js"></script>
+    <script>
+        function getQueryParam(param) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(param);
+        }
+
+        function copyResponse() {
+            const responseJson = document.getElementById('responseJson').textContent;
+            navigator.clipboard.writeText(responseJson).then(() => {
+                alert('Response JSON copied to clipboard!');
+            }).catch(err => {
+                console.error('Copy failed:', err);
+                alert('Failed to copy response.');
+            });
+        }
+
+        async function getForm(formId) {
+            let forms = JSON.parse(localStorage.getItem('forms') || '{}');
+            if (!forms[formId]) {
+                try {
+                    const response = await fetch('forms.json');
+                    forms = await response.json();
+                    localStorage.setItem('forms', JSON.stringify(forms));
+                } catch (error) {
+                    console.error('Failed to load forms.json:', error);
+                }
+            }
+            return forms[formId];
+        }
+
+        document.addEventListener('DOMContentLoaded', async function() {
+            const formId = getQueryParam('id');
+            if (!formId) {
+                document.getElementById('formContainer').innerHTML = '<p class="text-danger">Invalid form ID.</p>';
+                return;
+            }
+            const form = await getForm(formId);
+            if (!form) {
+                document.getElementById('formContainer').innerHTML = '<p class="text-danger">Form not found.</p>';
+                return;
+            }
+
+            // Render form
+            document.getElementById('formTitle').textContent = form.title || 'Untitled Form';
+            document.getElementById('formDescription').textContent = form.description || '';
+            const questionsContainer = document.getElementById('questionsContainer');
+            form.questions.forEach((question, index) => {
+                const div = document.createElement('div');
+                div.className = 'mb-3';
+                let inputHtml = '';
+                switch (question.type) {
+                    case 'text':
+                        inputHtml = `<input type="text" class="form-control" name="q${question.id}" required>`;
+                        break;
+                    case 'textarea':
+                        inputHtml = `<textarea class="form-control" name="q${question.id}" rows="4" required></textarea>`;
+                        break;
+                    case 'radio':
+                        inputHtml = question.options.map(opt => `
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="q${question.id}" value="${opt}" required>
+                                <label class="form-check-label">${opt}</label>
+                            </div>
+                        `).join('');
+                        break;
+                    case 'checkbox':
+                        inputHtml = question.options.map(opt => `
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="q${question.id}" value="${opt}">
+                                <label class="form-check-label">${opt}</label>
+                            </div>
+                        `).join('');
+                        break;
+                }
+                div.innerHTML = `
+                    <label class="form-label">${question.title}</label>
+                    ${inputHtml}
+                `;
+                questionsContainer.appendChild(div);
+            });
+
+            // Handle form submission
+            document.getElementById('publicForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const formData = new FormData(e.target);
+                const responseData = {};
+                form.questions.forEach(question => {
+                    if (question.type === 'checkbox') {
+                        responseData[`q${question.id}`] = formData.getAll(`q${question.id}`);
+                    } else {
+                        responseData[`q${question.id}`] = formData.get(`q${question.id}`);
+                    }
+                });
+                const response = {
+                    formId,
+                    userId: 'public-user',
+                    answers: responseData,
+                    timestamp: new Date().toISOString()
+                };
+                // Store in localStorage (public user's browser)
+                const publicResponses = JSON.parse(localStorage.getItem('public-responses') || '[]');
+                publicResponses.push(response);
+                localStorage.setItem('public-responses', JSON.stringify(publicResponses));
+                // Show JSON for manual submission
+                document.getElementById('responseJson').textContent = JSON.stringify(response, null, 2);
+                document.getElementById('responseOutput').classList.remove('d-none');
+                e.target.reset();
+                alert('Response submitted! Please copy the JSON and send it to the form creator.');
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FeedbackHub - Login</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="main.css">
+    <link rel="icon" type="image/png" href="/favicon.png">
+</head>
+<body class="auth-page">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6 col-lg-4">
+                <div class="auth-card">
+                    <h1 class="text-center mb-4">FeedbackHub</h1>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="email" placeholder="Enter your email" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Password</label>
+                        <input type="password" class="form-control" id="password" placeholder="Enter your password" required>
+                    </div>
+                    <button type="button" class="btn btn-primary w-100 mb-3" id="loginBtn">Login</button>
+                    <div class="d-grid gap-2">
+                        <button id="demoLoginBtn" class="btn btn-outline-primary">
+                            <i class="bi bi-person"></i> Continue as Demo User
+                        </button>
+                    </div>
+                    <p class="mt-3 text-center">
+                        Don't have an account? <a href="register.html" id="registerLink">Register here</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="auth.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Email/Password Login
+            document.getElementById('loginBtn').addEventListener('click', async function() {
+                const email = document.getElementById('email').value.trim();
+                const password = document.getElementById('password').value;
+                if (!email || !password) {
+                    console.warn('Missing email or password');
+                    alert('Please enter both email and password');
+                    return;
+                }
+                try {
+                    await authSystem.login(email, password);
+                    const user = authSystem.getCurrentUser();
+                    console.log('Login successful for user:', user);
+                    window.location.href = user.role === 'admin' ? 'admin.html' : 'index.html';
+                } catch (error) {
+                    console.error('Login error:', error);
+                    alert('Login failed: ' + error.message);
+                }
+            });
+
+            // Demo Login
+            document.getElementById('demoLoginBtn').addEventListener('click', function() {
+                try {
+                    authSystem.loginAsDemo();
+                    console.log('Demo login successful');
+                    window.location.href = 'index.html';
+                } catch (error) {
+                    console.error('Demo login error:', error);
+                    alert('Demo login failed: ' + error.message);
+                }
+            });
+
+            // Debug Register Link
+            const registerLink = document.getElementById('registerLink');
+            if (registerLink) {
+                registerLink.addEventListener('click', function(e) {
+                    console.log('Register link clicked, navigating to register.html');
+                });
+            } else {
+                console.error('Register link not found');
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Online_Feedback_Form_System - Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="main.css">
+    <link rel="stylesheet" href="form-builder.css">
+</head>
+<body>
+    
+    <!-- Navbar loaded via JS -->
+    <div id="navbar-container"></div>
+
+    <div class="container my-5">
+        <div class="d-flex gap-2 mb-4">
+            <!-- Form creation dropdown -->
+            <div class="dropdown" id="formCreationDropdown">
+                <div class="create-new-btn dropdown-toggle" data-bs-toggle="dropdown">
+                    <i class="bi bi-plus-circle"></i> Create/New
+                </div>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="#" id="generalFormBtn">General Form</a></li>
+                    <li><a class="dropdown-item" href="#" id="employeeFormBtn">Employee Form</a></li>
+                    <li><a class="dropdown-item" href="#" id="courseExitFormBtn">Course Exit Form</a></li>
+                </ul>
+            </div>
+<button class="btn btn-outline-primary ms-2" id="exportFormsBtn">Export Forms JSON</button>
+            <!-- Template dropdown -->
+            <div class="dropdown" id="templateDropdown">
+                <div class="create-new-btn dropdown-toggle" data-bs-toggle="dropdown">
+                    <i class="bi bi-collection"></i> Templates
+                </div>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="#" data-template="eventFeedback">Event Feedback</a></li>
+                    <li><a class="dropdown-item" href="#" data-template="courseEvaluation">Course Evaluation</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div id="formDisplayArea">
+            <div class="form-builder">
+                <div class="mb-3">
+                    <input type="text" class="form-control form-title" id="formTitle" placeholder="Form Title">
+                </div>
+                <div class="mb-3">
+                    <textarea class="form-control" id="formDescription" placeholder="Form Description"></textarea>
+                </div>
+                <div id="questionsContainer"></div>
+                <button type="button" class="btn btn-primary add-question-btn" id="addQuestionBtn">
+                    <i class="bi bi-plus-circle"></i> Add Question
+                </button>
+                <div class="share-link-container d-none" id="shareLinkContainer">
+                    <div class="mb-3">
+                        <label class="form-label">Shareable Link</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="generatedLink" readonly>
+                            <button class="btn btn-outline-secondary" id="copyLinkBtn">
+                                <i class="bi bi-clipboard"></i> Copy
+                            </button>
+                        </div>
+                    </div>
+                    <div class="share-buttons">
+                        <button class="btn btn-outline-primary" id="emailShareBtn">
+                            <i class="bi bi-envelope"></i> Email
+                        </button>
+                        <button class="btn btn-outline-success" id="whatsappShareBtn">
+                            <i class="bi bi-whatsapp"></i> WhatsApp
+                        </button>
+                        <button class="btn btn-outline-info" id="downloadQrBtn">
+                            <i class="bi bi-qr-code"></i> QR Code
+                        </button>
+                        <button class="btn btn-outline-dark d-none" id="nativeShareBtn">
+                            <i class="bi bi-share"></i> Share
+                        </button>
+                    </div>
+                </div>
+                <button type="button" class="btn btn-success mt-3" id="createFormBtn">
+                    <i class="bi bi-check-circle"></i> Create Form
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Question Template -->
+    <template id="questionTemplate">
+        <div class="question-card" data-question-id="">
+            <div class="d-flex justify-content-between align-items-start mb-3">
+                <input type="text" class="form-control question-title" placeholder="Question">
+                <select class="form-select question-type" style="width: 220px; margin-left: 10px;">
+                    <option value="radio">Multiple choice</option>
+                    <option value="checkbox">Checkboxes</option>
+                    <option value="dropdown">Dropdown</option>
+                    <option value="starRating">Star rating</option>
+                    <option value="text">Short answer</option>
+                    <option value="textarea">Paragraph</option>
+                    <option value="file">File upload</option>
+                    <option value="date">Date</option>
+                    <option value="time">Time</option>
+                    <option value="datetime">Date and time</option>
+                </select>
+            </div>
+            
+            <div class="options-container"></div>
+            
+            <div class="mt-2">
+                <button type="button" class="btn btn-sm btn-outline-secondary ms-2 duplicate-question">
+                    <i class="bi bi-files"></i> Duplicate
+                </button>
+                <button type="button" class="btn btn-sm btn-outline-danger remove-question">
+                    <i class="bi bi-trash"></i> Remove
+                </button>
+            </div>
+        </div>
+    </template>
+    
+
+    <!-- Option Templates -->
+    <template id="optionTemplate">
+        <div class="option-item">
+            <input type="radio" class="form-check-input me-2" disabled>
+            <input type="text" class="form-control option-text" placeholder="Option">
+            <button class="btn btn-sm btn-outline-danger ms-2 remove-option">
+                <i class="bi bi-x"></i>
+            </button>
+        </div>
+    </template>
+
+    <template id="checkboxOptionTemplate">
+        <div class="option-item">
+            <input type="checkbox" class="form-check-input me-2" disabled>
+            <input type="text" class="form-control option-text" placeholder="Option">
+            <button class="btn btn-sm btn-outline-danger ms-2 remove-option">
+                <i class="bi bi-x"></i>
+            </button>
+        </div>
+    </template>
+
+    <template id="dropdownOptionTemplate">
+        <div class="option-item">
+            <input type="text" class="form-control option-text" placeholder="Option">
+            <button class="btn btn-sm btn-outline-danger ms-2 remove-option">
+                <i class="bi bi-x"></i>
+            </button>
+        </div>
+    </template>
+    
+
+    <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="auth.js"></script>
+    <script src="utils.js"></script>
+    <script src="form-builder.js"></script>
+    <script src="templates.js"></script>
+    <script src="analytics.js"></script>
+    <script src="responses.js"></script>
+    <script>
+        // Load navbar
+        fetch('navbar.html')
+            .then(response => response.text())
+            .then(html => {
+                document.getElementById('navbar-container').innerHTML = html;
+                // Initialize form builder
+                initFormBuilder();
+            });
+    </script>
+    
+</body>
+</html>

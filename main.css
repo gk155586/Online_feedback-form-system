@@ -1,0 +1,45 @@
+body {
+    background-color: #f5f6f5;
+}
+
+.auth-page {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background-color: #f8f9fa;
+}
+
+.auth-card {
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.auth-card h1 {
+    font-size: 1.8rem;
+    font-weight: 600;
+}
+
+.create-new-btn {
+    background-color: #0d6efd;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    text-decoration: none;
+}
+
+.create-new-btn:hover {
+    background-color: #0b5ed7;
+    color: white;
+}
+
+.navbar-brand {
+    font-weight: 600;
+}

@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Online_Feedback_Form_System - Responses</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="main.css">
+    <link rel="stylesheet" href="responses.css">
+    
+</head>
+<body>
+    <!-- Navbar loaded via JS -->
+    <div id="navbar-container"></div>
+
+    <div class="container my-5">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <a href="index.html" class="btn btn-sm btn-outline-primary me-2">
+    <i class="bi bi-arrow-left"></i> Back to Forms
+</a><h2>Your Form Responses</h2>
+            <div class="export-buttons">
+                <button id="exportCSVBtn" class="btn btn-outline-secondary btn-sm">
+                    <i class="bi bi-file-earmark-excel"></i> Export CSV
+                </button>
+                <button id="exportPDFBtn" class="btn btn-outline-secondary btn-sm ms-2">
+                    <i class="bi bi-file-earmark-pdf"></i> Export PDF
+                </button>
+            </div>
+        </div>
+        
+        <div class="response-filter">
+            <div class="row">
+                <div class="col-md-4">
+                    <label class="form-label">Filter by Date</label>
+                    <input type="date" class="form-control" id="dateFilter">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Filter by Keyword</label>
+                    <input type="text" class="form-control" id="keywordFilter" placeholder="Search responses...">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Filter by Status</label>
+                    <select class="form-select" id="statusFilter">
+                        <option value="all">All Responses</option>
+                        <option value="new">New</option>
+                        <option value="reviewed">Reviewed</option>
+                        <option value="archived">Archived</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Your Forms</h5>
+                        <span class="badge bg-primary" id="totalFormsBadge">0</span>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="list-group list-group-flush" id="formsList">
+                            <!-- Forms will be loaded here -->
+                            <div class="empty-state">
+                                <i class="bi bi-inbox"></i>
+                                <p>No forms created yet</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <div>
+                            <h5 class="mb-0" id="selectedFormTitle">Select a form to view responses</h5>
+                            <small class="text-muted" id="responseCountText">0 responses</small>
+                        </div>
+                        <div>
+                            <button id="viewAnalyticsBtn" class="btn btn-sm btn-info d-none">
+                                <i class="bi bi-graph-up"></i> View Analytics
+                            </button>
+                            <button id="refreshResponsesBtn" class="btn btn-sm btn-outline-secondary ms-2">
+                                <i class="bi bi-arrow-clockwise"></i> Refresh
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body" id="responsesContainer">
+                        <div class="empty-state">
+                            <i class="bi bi-chat-square-text"></i>
+                            <p>Select a form to view responses</p>
+                        </div>
+                    </div>
+                    <div class="card-footer d-none" id="responsesFooter">
+                        <nav aria-label="Response pagination">
+                            <ul class="pagination pagination-sm justify-content-center mb-0">
+                                <li class="page-item disabled">
+                                    <a class="page-link" href="#" tabindex="-1">Previous</a>
+                                </li>
+                                <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                <li class="page-item">
+                                    <a class="page-link" href="#">Next</a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Analytics Modal -->
+    <div class="modal fade" id="analyticsModal" tabindex="-1">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Response Analytics</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="analyticsContent">
+                    <div class="row mb-4">
+                        <div class="col-md-4">
+                            <div class="card">
+                                <div class="card-body text-center">
+                                    <h6 class="text-muted">Total Responses</h6>
+                                    <h3 id="totalResponsesCount">0</h3>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card">
+                                <div class="card-body text-center">
+                                    <h6 class="text-muted">Completion Rate</h6>
+                                    <h3 id="completionRate">0%</h3>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card">
+                                <div class="card-body text-center">
+                                    <h6 class="text-muted">Avg. Time to Complete</h6>
+                                    <h3 id="avgCompletionTime">0s</h3>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="questionCharts"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="exportAnalyticsBtn">
+                        <i class="bi bi-download"></i> Export Analytics
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Response Detail Modal -->
+    <div class="modal fade" id="responseDetailModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Response Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="responseDetailContent">
+                    <!-- Response details will be loaded here -->
+                </div>
+                <div class="modal-footer">
+                    <div class="me-auto">
+                        <select class="form-select form-select-sm" id="responseStatusSelect" style="width: 150px;">
+                            <option value="new">New</option>
+                            <option value="reviewed">Reviewed</option>
+                            <option value="archived">Archived</option>
+                        </select>
+                    </div>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-danger">
+                        <i class="bi bi-trash"></i> Delete
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/csv-export@1.0.0/dist/csv-export.min.js"></script>
+    <script src="auth.js"></script>
+    <script src="responses.js"></script>
+    <script src="analytics.js"></script>
+    <script>
+        // Enhanced responses functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load navbar
+            fetch('navbar.html')
+                .then(response => response.text())
+                .then(html => {
+                    document.getElementById('navbar-container').innerHTML = html;
+                    initResponsesPage();
+                    
+                    // Add event listeners after navbar is loaded
+                    document.getElementById('refreshResponsesBtn').addEventListener('click', function() {
+                        loadUserForms();
+                        const activeForm = document.querySelector('#formsList .list-group-item.active');
+                        if (activeForm) {
+                            loadFormResponses(activeForm.dataset.formId);
+                        }
+                    });
+                    
+                    document.getElementById('exportCSVBtn').addEventListener('click', exportResponsesToCSV);
+                    document.getElementById('exportPDFBtn').addEventListener('click', exportResponsesToPDF);
+                    document.getElementById('exportAnalyticsBtn').addEventListener('click', exportAnalyticsToPDF);
+                    
+                    // Filter event listeners
+                    document.getElementById('dateFilter').addEventListener('change', applyFilters);
+                    document.getElementById('keywordFilter').addEventListener('input', applyFilters);
+                    document.getElementById('statusFilter').addEventListener('change', applyFilters);
+                });
+        });
+
+        function applyFilters() {
+            const activeForm = document.querySelector('#formsList .list-group-item.active');
+            if (activeForm) {
+                loadFormResponses(activeForm.dataset.formId);
+            }
+        }
+
+        function exportResponsesToCSV() {
+            const activeForm = document.querySelector('#formsList .list-group-item.active');
+            if (!activeForm) {
+                alert('Please select a form first');
+                return;
+            }
+            
+            const formId = activeForm.dataset.formId;
+            const formData = authSystem.getForm(formId);
+            const responses = authSystem.getResponses(formId);
+            
+            if (responses.length === 0) {
+                alert('No responses to export');
+                return;
+            }
+            
+            // Prepare CSV content
+            let csvContent = "data:text/csv;charset=utf-8,";
+            
+            // Add headers
+            const headers = ["Timestamp", "Status"];
+            formData.questions.forEach(question => {
+                headers.push(question.title);
+            });
+            csvContent += headers.join(",") + "\r\n";
+            
+            // Add response data
+            responses.forEach(response => {
+                const row = [
+                    new Date(response.timestamp).toLocaleString(),
+                    response.status || 'new'
+                ];
+                
+                formData.questions.forEach(question => {
+                    const answer = response.answers[`q${question.id}`] || '';
+                    row.push(Array.isArray(answer) ? answer.join('; ') : answer);
+                });
+                
+                csvContent += row.map(field => `"${field.toString().replace(/"/g, '""')}"`).join(",") + "\r\n";
+            });
+            
+            // Download CSV
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", `${formData.title}_responses_${new Date().toISOString().slice(0,10)}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function exportResponsesToPDF() {
+            alert('PDF export functionality would be implemented here');
+            // In a real implementation, this would use jsPDF to generate a PDF
+        }
+
+        function exportAnalyticsToPDF() {
+            alert('Analytics PDF export functionality would be implemented here');
+            // In a real implementation, this would use jsPDF to generate a PDF of the analytics
+        }
+
+        // Enhanced response item click handler
+        function setupResponseItemClick() {
+            document.querySelectorAll('.response-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    const responseId = this.dataset.responseId;
+                    showResponseDetails(responseId);
+                });
+            });
+        }
+
+        function showResponseDetails(responseId) {
+            // In a real implementation, this would show detailed view of a response
+            const modal = new bootstrap.Modal(document.getElementById('responseDetailModal'));
+            modal.show();
+        }
+    </script>
+</body>
+</html>
